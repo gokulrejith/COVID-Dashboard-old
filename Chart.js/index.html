@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv=“Pragma” content=”no-cache”>
+  <meta http-equiv=“Expires” content=”-1″>
+  <meta http-equiv=“CACHE-CONTROL” content=”NO-CACHE”>
+  <title>Temperature Data Bar Graph</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+</head>
+
+<style>
+  .test1 {
+    height: 800px;
+    width: 600px;
+  }
+</style>
+
+<body>
+  <div class="test1">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <script>
+    var file = 'https://raw.githubusercontent.com/gokulrejith/Test/master/data.csv';
+    d3.csv(file).then(makeChart);
+
+    function makeChart(days) {
+      var dayLabel = days.map(function(d) {
+        return d.Day
+      });
+      var dayTemp = days.map(function(d) {
+        return d.Temperature
+      });
+      //Set Min for better visible range
+      var minX = d3.min(dayTemp);
+      minX -= 10;
+
+      var chart = new Chart('chart', {
+        type: 'bar',
+        data: {
+          labels: dayLabel,
+          datasets: [{
+            label: 'COVID Cases',
+            data: dayTemp,
+            backgroundColor: '#B22222'
+          }]
+        },
+        options: {
+          title: {
+            display: false,
+            text: file
+          },
+          legend: {
+            display: true,
+            text: 'No. of cases per day'
+          },
+          scales: {
+            xAxes: [{
+              ticks: {
+                suggestedMin: minX,
+              }
+            }]
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

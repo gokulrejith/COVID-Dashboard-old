@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv=“Pragma” content=”no-cache”>
+  <meta http-equiv=“Expires” content=”-1″>
+  <meta http-equiv=“CACHE-CONTROL” content=”NO-CACHE”>
+  <title>World Data</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+</head>
+
+<style>
+  .container1 {
+    height: 300px;
+    width: 650px;
+   margin: 0px auto;
+  }
+</style>
+
+<body>
+  <div class="container1">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <script>
+    var file = 'https://raw.githubusercontent.com/gokulrejith/Test/master/worldData.csv';
+    d3.csv(file).then(stackedBar);
+
+    function stackedBar(country) {
+      var countryLabel = country.map(function(d) {
+        return d.country
+      });
+      var total = country.map(function(d) {
+        return d.cases
+      });
+      var deaths = country.map(function(d) {
+        return d.deaths
+      });
+
+      var recovered = country.map(function(d) {
+        return d.recovered
+      });
+
+      var chart = new Chart('chart', {
+        type: 'bar',
+        data: {
+          labels: countryLabel,
+          datasets: [{
+            label: 'Total cases',
+            data: total,
+            backgroundColor: '#ffcc33'
+          },
+          {
+            label: 'Recovered',
+            data: recovered,
+            backgroundColor: '#80ff00'
+          },
+          {
+            label: 'deaths',
+            data: deaths,
+            backgroundColor: '#ff4000'
+          }]
+        },
+        options: {
+          title: {
+            display: false,
+            text: file
+          },
+          legend: {
+            display: true,
+            text: 'World'
+          },
+          scales: {
+            xAxes: [{ stacked: true}],
+            yAxes: [{ stacked: true}]
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv=“Pragma” content=”no-cache”>
+  <meta http-equiv=“Expires” content=”-1″>
+  <meta http-equiv=“CACHE-CONTROL” content=”NO-CACHE”>
+  <title>Total Quarantine Kerala</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+</head>
+
+<style>
+  .container1 {
+    height: 300px;
+    width: 650px;
+   margin: 0px auto;
+  }
+</style>
+
+<body>
+  <div class="container1">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <script>
+    var file = 'https://raw.githubusercontent.com/gokulrejith/Test/master/data1.csv';
+    d3.csv(file).then(stackedBar);
+
+    function stackedBar(dist) {
+      var districtLabel = dist.map(function(d) {
+        return d.District
+      });
+      var hosp = dist.map(function(d) {
+        return d.Hospitalized
+      });
+      var home = dist.map(function(d) {
+        return d.Home_Institutional
+      });
+
+      var chart = new Chart('chart', {
+        type: 'bar',
+        data: {
+          labels: districtLabel,
+          datasets: [{
+            label: 'Hospitalized',
+            data: hosp,
+            backgroundColor: '#ff3333'
+          },
+          {
+            label: 'Home/Instituional Quarantine',
+            data: home,
+            backgroundColor: '#ffcc33'
+          }]
+        },
+        options: {
+          title: {
+            display: false,
+            text: file
+          },
+          legend: {
+            display: true,
+            text: 'Quarantined'
+          },
+          scales: {
+            xAxes: [{ stacked: true}],
+            yAxes: [{ stacked: true}]
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

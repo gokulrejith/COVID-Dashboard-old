@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+<p>Fetching data</p>
+</body>
+<script>
+  fetch('https://api.apispreadsheets.com/data/599/?dataFormat=matrix')
+    .then(response => response.json())
+    .then(data => console.log(data));
+  alert(data);
+
+  const strng = JSON.stringify(data);
+  console.log(strng);
+  window.print(strng);
+</script>
+
+</html>

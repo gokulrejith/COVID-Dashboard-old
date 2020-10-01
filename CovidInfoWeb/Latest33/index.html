@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html>
+<title>FISAT COVID-19 Dashboard</title>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.ico" type="image/ico" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="Dashboard_style.css">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="c3.css" rel="stylesheet" type="text/css">
+  <link rel="icon" href="https://lh3.googleusercontent.com/proxy/d3cv_wFPdL2g2uYnO3KnyGAcsVTReRv21wKLIoZWHzoSWMdGcEKrCR0i1Sa9iwbg8fkIKzbDPYC84x9vEv-9S-GDSe_wSg" type="image/x-icon">
+  <!-- Load d3.js and c3.js -->
+  <script src="d3.v3.min.js" charset="utf-8"></script>
+  <script src="c3.min.js">
+  </script>
+
+
+  <!-- Load papaparse.js -->
+  <script src="papaparse.min.js">
+  </script>
+  <link href="bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template-->
+
+
+  <!-- Page level plugin CSS-->
+
+
+  <!-- Custom styles for this template-->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .mr-5 {
+      color: #ffffff;
+    }
+
+    .clock {
+
+      color: #ffffff;
+      font-size: 16px;
+      text-align: right;
+      padding-top: 15px;
+      padding-bottom: 10px;
+      padding-right: 10px;
+    }
+
+    body {
+      background-image: linear-gradient(to top right, blue, white);
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: auto;
+
+
+    }
+
+    .button {
+      display: inline-block;
+      border-radius: 4px;
+      background-color: #abafb1;
+      border: 5px;
+      color: #302d2d;
+      text-align: left;
+      font-size: 20px;
+      padding: 10px;
+      width: 210px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 13px;
+
+    }
+
+    @media only screen and (max-width: 568px) {
+
+      .button {
+        box-shadow: 3px 3px 10px hsl(0, 1%, 40%);
+        color: #ae80ff;
+
+      }
+
+      #tryhide1 {
+        display: none !important;
+      }
+
+      #tryhiding.w3-container {
+        display: none !important;
+      }
+
+      #pic {
+        display: none !important;
+      }
+
+      .fisatbox {
+        display: none !important;
+        clear: both;
+        float: left;
+        margin: 10px auto 5px 20px;
+        width: 28%;
+        display: none;
+      }
+
+      #MainHeading1 {
+        vertical-align: top;
+      }
+    }
+
+    .button span {
+      cursor: pointer;
+      display: inline;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button:hover span {
+      padding-right: 10px;
+      padding-top: 3px;
+    }
+
+    .button:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+    .cov {
+      font-size: 20px;
+      color: #FFFFFF;
+    }
+
+
+
+    .sel {
+
+      display: none;
+
+    }
+
+    .pic {
+
+      display: block;
+
+    }
+
+    .mapParent {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #map {
+
+      top: 0;
+      bottom: 0;
+      width: 1350px;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 12px
+    }
+
+    .map-overlay {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.2);
+      right: 1px;
+      margin-right: 20px;
+      margin-top: 15px;
+
+      font-family: sans-serif;
+      overflow: auto;
+      border-radius: 12px;
+      z-index: 1;
+      top: 0;
+      height: 85px;
+      width: 220px;
+      text-align: center;
+    }
+
+
+
+    .box {
+
+      height: 30px;
+      border: 1px solid rgb(83, 83, 83);
+      font-size: 18px;
+      color: #0f0f0f;
+      background-color: rgb(255, 255, 255);
+      border-radius: 5px;
+      box-shadow: 3px 3px 10px hsl(0, 1%, 40%);
+    }
+
+    .box1 {
+      height: 30px;
+      border: 1px solid rgb(83, 83, 83);
+      font-size: 18px;
+      color: #0f0f0f;
+      background-color: rgb(255, 255, 255);
+      border-radius: 5px;
+      box-shadow: 3px 3px 10px hsl(0, 1%, 40%);
+    }
+
+    .plot {
+      margin-right: 20px;
+    }
+
+    .plot1 {
+      padding-left: 0%;
+      margin-right: 40px;
+    }
+
+    #customers {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    #customers tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    #customers tr:hover {
+      background-color: #ddd;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: center;
+      background-color: #115288;
+      color: white;
+    }
+    #customers1 {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    #customers1 td,
+    #customers1 th {
+      border: 1px solid rgb(255, 255, 255);
+      text-align: center;
+      background-color: rgb(252, 212, 212);
+    }
+
+    #customers1 tr:hover {
+      background-color: rgb(255, 255, 255);
+    }
+
+    #customers1 th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: center;
+      background-color: #520000;
+      color: white;
+    }
+    #contacttable {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    #contacttable td,
+    #contacttable th {
+      border: 1px solid rgb(255, 255, 255);
+      text-align: center;
+      background-color: rgb(252, 212, 212);
+    }
+
+    #contacttable tr:hover {
+      background-color: rgb(255, 255, 255);
+    }
+
+    #contacttable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: center;
+      background-color: #520000;
+      color: white;
+    }
+
+
+    .card-header {
+      color: rgb(0, 0, 0);
+      background-image: linear-gradient(to bottom right, #C0C0C0, rgb(255, 255, 255));
+      font-weight: bold;
+      font-size: 18.5px;
+    }
+
+    .card {
+      box-shadow: 3px 3px 10px hsl(0, 1%, 40%);
+    }
+
+    .con_card {
+      box-shadow: 3px 3px 10px hsl(0, 1%, 40%);
+      transition: 0.3s;
+
+
+      text-align: center;
+    }
+
+    .card-body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+
+    .w3-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #Active1,
+    #Active,
+    #cured,
+    #cured1,
+    #death1,
+    #death,
+    #confirmed1,
+    #confirmed {
+      font-size: 25px;
+    }
+
+    #fly {
+      display: block;
+      position: absolute;
+      width: 65px;
+      height: 30px;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      text-align: center;
+      color: #fff;
+      background-color: #614e6e;
+      z-index: 1;
+      font-size: 11px;
+      top: 90%;
+      left: 2%;
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+      outline: none;
+    }
+
+    #row {
+      vertical-align: top !important;
+    }
+  </style>
+
+
+</head>
+
+<body class="w3-light-grey">
+
+
+  <!-- Top container -->
+  <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+    <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i> &nbsp;</button>
+    <span class="w3-bar-item w3-left">FISAT COVID-19 Dashboard</span>
+    <div id="MyClockDisplay" class="clock" onload="showTime()"></div>
+  </div>
+
+  <!-- Sidebar/menu -->
+
+  <div id="navbar">
+
+
+    <nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="z-index:3;width:250px; box-shadow: 3px 3px 10px hsl(0, 1%, 40%);font-weight: 1100" id="mySidebar">
+      <ul class=" w3-large w3-text-grey sidebar navbar-nav" style="font-weight:bold;background-color:#ffffff;height:100%">
+        <div class="w3-container w3-display-container w3-padding-16">
+
+          <br>
+          <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
+          <h3 class="w3-wide">
+            <img src="fisatLogo.jpg" width="168" height="150" style="margin:30px">
+          </h3>
+        </div>
+
+
+        <li class="nav-item active">
+          <button class="button w3-button w3-block w3-red w3-left-align" value="Home" id="Home" style="vertical-align:middle;color: #115288;border-radius:30px;overflow:hidden;outline:none;" onclick="home(parseData)"><span><i
+                class="fa fa-home"></i>Kerala State </span></button>
+        </li>
+        <li class="nav-item">
+          <button class="button w3-button w3-block w3-indigo w3-left-align" value="District Wise" id="District Wise" value="District Wise" style="vertical-align:middle;border-radius:30px;overflow:hidden;outline:none;" onclick=dis(parseData)><span><i
+                class="fa fa-map-marker"></i>Kerala Districts</span></button>
+
+        </li>
+        <li class="nav-item dropdown">
+          <button class="button w3-button w3-block w3-indigo w3-left-align" value="State wise" id="State wise" style="vertical-align:middle;border-radius:30px;overflow:hidden;outline:none;" onclick="sta(parseData)"><span><i
+                class="fa fa-map-marker"></i>India States </span></button>
+
+        </li>
+        <li class="nav-item">
+          <button class="button w3-button w3-block w3-indigo w3-left-align" value="WorldS" id="WorldS" style="vertical-align:middle;border-radius:30px;;overflow:hidden;outline:none;" onclick="world(parseData)"><span><i
+                class="fa fa-globe"></i>World</span></button>
+        </li>
+
+      </ul>
+
+    </nav>
+  </div>
+
+  <!-- Overlay effect when opening sidebar on small screens -->
+  <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+  <!-- !PAGE CONTENT! -->
+  <div class="w3-main" style="margin-left:250px;margin-top:43px;background-image: linear-gradient(to bottom right, rgb(212, 234, 238), A9A9A9);">
+
+    <!-- Header -->
+    <div id="pic" class="pic">
+
+
+      <header class="w3-container" style="padding-top:60px;padding-bottom: 10px" id="tryhiding">
+        <div class="fisatbox">
+          <img src="fisatName.png" width="700" height="72.333">
+      </header>
+    </div>
+    <div class="MainHeading" id="MainHeading1">
+      <h2 align=center style="color:black"><br><span id=tryhide1><strong>COVID-19</strong> </span><strong>Kerala Dashboard</strong></h2>
+    </div>
+    <div class="MainHeading" id="MainHeading2">
+      <h2 align=center style="color:black"><br><strong>Kerala Dashboard</strong></h2>
+    </div>
+    <div class="MainHeading" id="MainHeading3">
+      <h1 align=center style="color:black"><br><strong>India</strong></h1>
+    </div>
+    <div class="MainHeading" id="MainHeading4">
+      <h1 align=center style="color:black"><br><strong>World</strong></h1>
+    </div>
+
+    <br>
+    <div class="container-fluid">
+
+      <!-- Breadcrumbs-->
+      <div id="select" class="sel">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+
+            <label for="cars">
+              <h4><strong>Choose a</strong> <strong id="ch"></strong>:</h4>
+            </label>
+            <select name="cars" class="box" id="cars">
+
+
+            </select>
+
+
+            <input type="button" value="View" class="box1" onclick="parseData()">
+
+          </li>
+
+        </ol>
+      </div>
+      <div id="block">
+        <div class="row">
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="con_card w3-container w3-blue" style='border-radius : 15px;height : 140px'>
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fa fa-users w3-xxxlarge"></i>
+
+                </div>
+                <div class="mr-5">
+                  <h3><strong>Confirmed</strong></h3><strong id="confirmed1"></strong>&emsp;&emsp;<strong id="confirmed"></strong>
+                 <div id="contactiv"> <h5><strong>Contact</strong>&emsp;<strong id="contact"></strong></h5></div>
+                </div>
+
+
+
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card w3-container w3-orange" style='border-radius : 15px;height : 140px'>
+              <div class="card-body w3-padding-2">
+                <div class="card-body-icon">
+                  <i class="fa fa-plus-square w3-xxxlarge"></i>
+                </div>
+                <div class="mr-5">
+                  <h3><strong>Active</strong></h3><strong id="Active1"></strong>&emsp;&emsp;<strong id="Active"></strong>
+                </div>
+
+
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card w3-container w3-red" style='border-radius : 15px;height : 140px'>
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fa fa-exclamation-triangle w3-xxxlarge"></i>
+                </div>
+                <div class="mr-5">
+                  <h3><strong>Deaths</strong></h3><strong id="death1"></strong>&emsp;&emsp;<strong id="death"></strong>
+                </div>
+
+
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card w3-container w3-green" style='border-radius : 15px;height : 140px'>
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fa fa-heart w3-xxxlarge"></i>
+                </div>
+                <div class="mr-5">
+                  <h3><strong>Recovered</strong></h3><strong id="cured1"></strong>&emsp;&emsp;<strong id="cured"></strong>
+                </div>
+
+
+
+              </div>
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+ 
+      <div id="map1">
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa-chart-area"></i>
+            <strong id="m1h">c</strong></div>
+          <div class="card-body">
+
+            <div id="map">
+              <button id="fly">Recenter</button>
+              <div class='map-overlay'>
+
+
+
+                <h4> <strong id='pd' style='color : red'>Hover to know more</strong></h4>
+
+                <h4> <strong id='px' style='color : rgb(255, 102, 0)'></strong> </h4>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div id="graph1">
+        <div class="card mb-3">
+          <div class="card-header">
+            <span><i class="fas fa-chart-line"></i><strong id="g1h">a</strong></span></div>
+            <div style="margin-top:10px" ><div id ="stalen"><button class="w3-red" style="vertical-align:middle;border-radius:30px;overflow:hidden;outline:none;width: fit-content;" onclick= lee()><span>Linear</span></button>
+              <button class="w3-red" style="vertical-align:middle;border-radius:30px;overflow:hidden;outline:none;width: fit-content;" onclick= dai()><span>Daily</span></button></div>
+              <div id ="dislen"><button class="w3-red" style="vertical-align:middle;border-radius:30px;overflow:hidden;outline:none;width: fit-content;" onclick= leee()><span>Linear</span></button>
+                <button class="w3-red" style="vertical-align:middle;border-radius:30px;overflow:hidden;outline:none;width: fit-content;" onclick= daii()><span>Daily</span></button></div>
+              </div>
+          <div class="card-body">
+
+            
+            <div id="chart" class="plot1"></div>
+          </div>
+
+        </div>
+      </div>
+      <div id="graph2">
+        <div class="card mb-3">
+          <div class="card-header">
+            <span><i class="fas fa-chart-line"></i><strong id="g2h">b</strong></span></div>
+          <div class="card-body">
+
+            <div id="chart1" class="plot"></div>
+          </div>
+        </div>
+      </div>
+
+     
+
+
+      <div id="tab2">
+        <div class="card mb-3">
+          <div class="card-header">
+  
+            <h5><strong> Containment&nbsp; Zones</strong></h5>
+          </div>
+          <div class="card-body">
+  
+            <table id="customers1" style="overflow: scroll;text-align: center">
+     
+            </table><br>
+  
+          </div>
+        </div>
+      </div>
+
+      <div id="pie1">
+        <div class="card mb-3">
+          <div class="card-header">
+            <span><i class="fas fa-chart-pie"></i> <strong id="g3h">c</strong></span></div>
+
+          <div class="card-body">
+            <div id="pie" class="plot"></div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="bar1">
+        <div class="card mb-3">
+          <div class="card-header">
+            <span><i class="fas fa-chart-bar"></i><strong id="g4h">d</strong></span></div>
+          <div class="card-body">
+
+            <div id="bar2" class="plot"></div>
+
+
+          </div>
+        </div>
+      </div>
+
+
+      <div id="contactbox">
+        <div class="card mb-3">
+          <div class="card-header">
+  
+            <h5><strong>  Spread of COVID-19 in Kerala</strong></h5>
+          </div>
+          <div class="card-body">
+         
+              <div id="contactpie" class="plot"></div>
+              </div>
+              <div class="card-body">
+            <table id="contacttable" style="overflow: scroll;text-align: center">
+     
+            </table><br>
+  
+          </div>
+        </div>
+      </div>
+
+
+      <div id="bara1">
+        <div class="card mb-3">
+          <div class="card-header">
+
+            <span><i class="fas fa-chart-bar"></i><strong id="g5h">e</strong></span></div>
+
+          <div class="card-body">
+            <div id="bara2" class="plot"></div>
+          </div>
+        </div>
+      </div>
+      <script src="create-graph.js"></script>
+
+      
+
+
+      <div id="tab">
+        <div class="card mb-3">
+          <div class="card-header">
+
+            <h5><strong> Top 10&nbsp;<strong id="top">Countries</strong></strong></h5>
+          </div>
+          <div class="card-body">
+
+            <table id="customers" style="overflow: scroll;text-align: center">
+              <tr>
+                <th id="head"></th>
+                <th style="background-color:orange">Confirmed</th>
+                <th style="background-color:red">Deaths</th>
+                <th style="background-color:green">Recovered</th>
+              </tr>
+
+              <tr>
+                <td id="1"></td>
+                <td id="11"></td>
+                <td id="21"></td>
+                <td id="31"></td>
+              </tr>
+              <tr>
+                <td id="2"></td>
+                <td id="12"></td>
+                <td id="22"></td>
+                <td id="32"></td>
+              </tr>
+              <tr>
+                <td id="3"></td>
+                <td id="13"></td>
+                <td id="23"></td>
+                <td id="33"></td>
+
+              </tr>
+              <tr>
+                <td id="4"></td>
+                <td id="14"></td>
+                <td id="24"></td>
+                <td id="34"></td>
+              </tr>
+              <tr>
+                <td id="5"></td>
+                <td id="15"></td>
+                <td id="25"></td>
+                <td id="35"></td>
+              </tr>
+              <tr>
+                <td id="6"></td>
+                <td id="16"></td>
+                <td id="26"></td>
+                <td id="36"></td>
+              </tr>
+              <tr>
+                <td id="7"></td>
+                <td id="17"></td>
+                <td id="27"></td>
+                <td id="37"></td>
+              </tr>
+              <tr>
+                <td id="8"></td>
+                <td id="18"></td>
+                <td id="28"></td>
+                <td id="38"></td>
+              </tr>
+              <tr>
+                <td id="9"></td>
+                <td id="19"></td>
+                <td id="29"></td>
+                <td id="39"></td>
+              </tr>
+              <tr>
+                <td id="10"></td>
+                <td id="20"></td>
+                <td id="30"></td>
+                <td id="40"></td>
+              </tr>
+
+            </table><br>
+
+          </div>
+        </div>
+      </div>
+
+  
+    </div>
+
+    <div class="dataSource" align='center'>
+      <h6>Data source:<br />Kerala Data is sourced from Govt of Kerala's Directorate of Health Services (DHS) Daily
+        Bulletin ><a href="https://dhs.kerala.gov.in/category/daily-bulletin">https://dhs.kerala.gov.in/category/daily-bulletin</a><br>
+        India Data is sourced from Govt of India's Ministry of Health and Family Welfare ><a href="https://www.mohfw.gov.in">https://www.mohfw.gov.in</a><br>
+        World Data is sourced from World Health Organization (WHO) ><a href="https://covid19.who.int">https://covid19.who.int</a></h6>
+    </div>
+
+
+    <!-- Footer -->
+    <div id="foot">
+      <footer class="w3-light-grey">
+        <div class="final_box">
+          <div align='center'>
+            <a href='https://www.hit-counts.com/'>
+              <img src='http://www.hit-counts.com/counter.php?t=MTQ0OTQ1Ng==' border='0' alt='professional logo design'></a>
+            <BR><a href='https://www.glowgraphics.co.uk/'>Visitor Number</a></div>
+          <div class="contact-me" align="center">
+            <h5><strong> Updated:&nbsp;<strong id="update"></strong>&nbsp;&nbsp;<strong id="uptime"></strong></strong></strong></h5>
+            <h4><br />Contact Us</h4>
+            
+            <h6>Federal Institute of Science And Technology (FISAT) <br />
+              Hormis Nagar, Mookkannoor P O,<br />
+              Angamaly, Ernakulam Dt.<br />
+              Kerala, India, Pin - 683 577 </h6>
+              <h4>E-mail: sreevidyap@fisat.ac.in</h4>
+          </div>
+
+
+
+          <div class="bottom-container">
+            <a class="footer-link" href="https://www.youtube.com/user/fisatofficial"><i class="fa fa-youtube-play" aria-hidden="true"></i> Youtube</a>
+            <a class="footer-link" href="https://twitter.com/fisatofficial/"><i class="fa fa-twitter-square" aria-hidden="true"></i> Twitter</a>
+            <a class="footer-link" href="http://www.fisat.ac.in/"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i> Website</a>
+            <a class="footer-link" href="https://www.facebook.com/fisats/"><i class="fa fa-facebook-square" aria-hidden="true"></i> Facebook</a>
+            <h3>©2018-22 Electronics & Instrumentation Department (EIE)</h3>
+          </div>
+
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Accordion
+
+
+
+    // Open and close sidebar
+    function w3_open() {
+      document.getElementById("mySidebar").style.display = "block";
+      document.getElementById("myOverlay").style.display = "block";
+      document.getElementById("navbar").style.display = "block";
+    }
+
+    function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+      document.getElementById("myOverlay").style.display = "none";
+      document.getElementById("navbar").style.display = "none";
+    }
+  </script>
+  <script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active0");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+  </script>
+  <script>
+    home();
+
+    function scrollWin(x, y) {
+      window.scrollBy(x, y);
+    }
+  </script>
+  <script>
+    function showTime() {
+      var date = new Date();
+      var h = date.getHours(); // 0 - 23
+      var m = date.getMinutes(); // 0 - 59
+      var s = date.getSeconds(); // 0 - 59
+      var session = "AM";
+
+      if (h == 0) {
+        h = 12;
+      }
+
+      if (h > 12) {
+        h = h - 12;
+        session = "PM";
+      }
+
+      h = (h < 10) ? "0" + h : h;
+      m = (m < 10) ? "0" + m : m;
+      s = (s < 10) ? "0" + s : s;
+
+      var time = h + ":" + m + ":" + s + " " + session;
+      document.getElementById("MyClockDisplay").innerText = time;
+      document.getElementById("MyClockDisplay").textContent = time;
+
+      setTimeout(showTime, 1000);
+
+    }
+
+    showTime();
+  </script>
+  <script src="create-graph.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+</body>
+
+</html>

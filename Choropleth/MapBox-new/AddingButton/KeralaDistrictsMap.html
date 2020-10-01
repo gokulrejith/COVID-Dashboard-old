@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
+
+  <style>
+    h2,
+    h3 {
+      margin: 10px;
+      font-size: 1.2em;
+      background-color: red;
+      border-radius: 6px;
+    }
+
+    h3 {
+      font-size: 1em;
+    }
+
+    p {
+      font-size: 0.85em;
+      margin: 10px;
+      text-align: center;
+    }
+
+    /**
+* Create a position for the map
+* on the page */
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 600px;
+      height: 600px;
+      overflow: hidden;
+      border-radius: 12px
+    }
+
+    /**
+* Set rules for how the map overlays
+* (information box and legend) will be displayed
+* on the page. */
+    .map-overlay {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      right: 0px;
+      margin-right: 45px;
+      margin-top: 5px;
+      font-family: sans-serif;
+      overflow: auto;
+      border-radius: 12px;
+      z-index: 1;
+      top: 0;
+      height: 115px;
+      width: 245px;
+      text-align: center;
+    }
+
+
+    .mapParent {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px
+    }
+
+    #colorWhite {
+      color: white;
+    }
+
+    #fly {
+      display: block;
+      position: relative;
+      margin: 0px auto;
+      width: 15%;
+      height: 40px;
+      padding: 10px;
+      border: none;
+      border-radius: 3px;
+      font-size: 12px;
+      text-align: center;
+      color: #fff;
+      background: #ee8a65;
+      z-index: 1;
+    }
+  </style>
+  <title></title>
+</head>
+
+<body>
+  <div class="mapParent">
+    <div id='map'></br>
+      <button id="fly">Recenter</button>
+      <div class='map-overlay'>
+        <h2 style='color : white'>COVID Cases</h2>
+        <div id='pd'>
+          <p>
+            <h4>Hover over districts</h4>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZ29rdWxyZWppdGgiLCJhIjoiY2tia2FnMHQzMHhodDJ0cXY4YTNnejAwMSJ9.zrdqxqj_9iq1BHkYydlF9A';
+  var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/gokulrejith/ckbmelwe31cd31ipg8fiq4263' // replace this with your style URL
+    //zoom: 6.4,
+    //center: [76.3053, 10.3723] // starting position [lng, lat]
+  });
+  document.getElementById('fly').addEventListener('click', function() {
+// Fly to a random location by offsetting the point -74.50, 40
+// by up to 5 degrees.
+map.flyTo({
+center: [
+-74.5 + (Math.random() - 0.5) * 10,
+40 + (Math.random() - 0.5) * 10
+],
+essential: true // this animation is considered essential with respect to prefers-reduced-motion
+});
+});
+
+  map.on('mousemove', function(e) {
+    var district = map.queryRenderedFeatures(e.point, {
+      layers: ['KeralaDistricts']
+    });
+
+    if (district.length > 0) {
+      document.getElementById('pd').innerHTML = '<h1><strong>' + district[0].properties.DISTRICT + '</strong></h1><p><h2 id = "colorWhite"><strong><em>' + district[0].properties.Cases + '</strong> Cases</em></p></h2>';
+      console.log(district[0].properties.Cases)
+    } else {
+      document.getElementById('pd').innerHTML = '<h4>Hover over districts</h4>';
+    }
+  });
+  map.getCanvas().style.cursor = 'default';
+  map.fitBounds([
+    [74.044885, 12.835487],
+    [78.743410, 7.980074]
+  ]);
+  map.addControl(new mapboxgl.NavigationControl());
+</script>
+
+</html>

@@ -1,0 +1,13 @@
+var proxyUrl = 'https://cors-anywhere.herokuapp.com/',
+    targetUrl = 'https://dashboard.kerala.gov.in/index.php'
+fetch(proxyUrl + targetUrl)
+.then(response => response.text())  
+.then(data => {
+    console.table(data);
+    document.querySelector("pre").innerHTML = JSON.stringify(data, null, 2);
+    return data;
+  })
+  .catch(e => {
+    console.log(e);
+    return e;
+  });

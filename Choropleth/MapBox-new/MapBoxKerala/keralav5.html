@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    h2,
+    h3 {
+      margin: 10px;
+      font-size: 1.2em;
+    }
+
+    h3 {
+      font-size: 1em;
+    }
+
+    p {
+      font-size: 0.85em;
+      margin: 10px;
+      text-align: left;
+    }
+
+    /**
+* Create a position for the map
+* on the page */
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 600px;
+      height: 600px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /**
+* Set rules for how the map overlays
+* (information box and legend) will be displayed
+* on the page. */
+    .map-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      margin-right: 40px;
+      font-family: Arial, sans-serif;
+      overflow: auto;
+      border-radius: 12px;
+      z-index: 1;
+    }
+
+    #features {
+      top: 0;
+      height: 100px;
+      margin-top: 20px;
+      width: 250px;
+    }
+  </style>
+  <title>Kerala cases</title>
+</head>
+
+<body>
+  </div>
+  <div id='map'>
+    <div class='map-overlay' id='features'>
+      <h2>COVID Cases</h2>
+      <div id='pd'>
+        <p>Hover for numbers.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZ29rdWxyZWppdGgiLCJhIjoiY2tia2FnMHQzMHhodDJ0cXY4YTNnejAwMSJ9.zrdqxqj_9iq1BHkYydlF9A';
+    var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/gokulrejith/ckbkkfrfc0u8b1iqotm6tkt2o/draft', // stylesheet location
+      center: [76.3053, 10.3723], // starting position [lng, lat]
+      zoom: 6.4 // starting zoom
+    });
+
+    map.on('mousemove', function(e) {
+      var district = map.queryRenderedFeatures(e.point, {
+        layers: ['keraladistrict-bpf0sw']
+      });
+
+      if (district.length > 0) {
+        document.getElementById('pd').innerHTML = '<h3><strong>' + district[0].properties.DISTRICT + '</strong></h3><p><strong><em>' + district[0].properties.Cases + '</strong> Cases</em></p>';
+        console.log(district[0].properties.Cases)
+      } else {
+        document.getElementById('pd').innerHTML = '<p>Hover for numbers.</p>';
+      }
+    });
+    map.getCanvas().style.cursor = 'default';
+  </script>
+
+</body>
+
+</html>
+<!---->

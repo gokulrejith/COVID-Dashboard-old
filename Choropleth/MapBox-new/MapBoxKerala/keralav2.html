@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Kerala cases</title>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+  <style>
+    .mapParent {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #mapKerala {
+      height: 600px;
+      width: 600px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mapParent">
+    <div id="mapKerala"></div>
+  </div>
+
+</body>
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZ29rdWxyZWppdGgiLCJhIjoiY2tia2FnMHQzMHhodDJ0cXY4YTNnejAwMSJ9.zrdqxqj_9iq1BHkYydlF9A';
+  var map = new mapboxgl.Map({
+    container: 'mapKerala', // container id
+    style: 'mapbox://styles/gokulrejith/ckbkkfrfc0u8b1iqotm6tkt2o/draft', // stylesheet location
+    center: [76.3053, 10.3723], // starting position [lng, lat]
+    zoom: 6.4 // starting zoom
+  });
+</script>
+
+</html>

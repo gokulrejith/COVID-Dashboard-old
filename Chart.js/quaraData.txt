@@ -1,0 +1,15 @@
+District a home/institutional Hospitalized b
+Thiruvananthapuram 16853 16711 142 25
+Kollam 7912 7779 133 27
+Pathanamthitta 4768 4656 112 14
+Idukki 4160 4119 41 6
+Kottayam 7852 7784 68 7
+Alappuzha 6586 6462 124 21
+Ernakulam 12787 12625 162 21
+Thrissur 14223 14055 168 8
+Palakkad 9325 9166 159 18
+Malappuram 17459 17072 387 58
+Kozhikode 13698 13489 209 42
+Wayanad 3392 3359 33 7
+Kannur 16014 15811 203 30
+Kasaragod 4313 4218 95 4
